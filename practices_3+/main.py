@@ -2,27 +2,48 @@ import re
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-import csv
-import os
+import mysql.connector
+from contextlib import contextmanager
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-FILE = "comments.csv"
-FIELDS = ["email", "name", "text"]
 PAGE_SIZE = 3
 
 
+def get_db():
+    return mysql.connector.connect(
+        host="db",
+        user="app",
+        password="apppassword",
+        database="app_db"
+    )
+
+
+@contextmanager
+def get_cursor(dictionary=False):
+    db = get_db()
+    cursor = db.cursor(dictionary=dictionary)
+    try:
+        yield cursor
+        db.commit()
+    finally:
+        cursor.close()
+        db.close()
+
+
 def load_comments():
-    comments = []
+    with get_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM Comment ORDER BY date DESC")
+        return cursor.fetchall()
 
-    if os.path.exists(FILE):
-        with open(FILE, "r", encoding="utf-8", newline="") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                comments.append(dict(row))
 
-    return comments
+def save_comment(data):
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO Comment (email, name, text) VALUES (%s, %s, %s)",
+            (data["email"], data["name"], data["text"])
+        )
 
 
 def paginate_comments(page):
@@ -33,15 +54,6 @@ def paginate_comments(page):
     start = (page - 1) * PAGE_SIZE
     comments = all_comments[start: start + PAGE_SIZE]
     return comments, page, total_pages
-
-
-def save_comment(data):
-    write_header = not os.path.exists(FILE) or os.path.getsize(FILE) == 0
-    with open(FILE, "a", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDS)
-        if write_header:
-            writer.writeheader()
-        writer.writerow(data)
 
 
 def validate_comment(email, name, text):
