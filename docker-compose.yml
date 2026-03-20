@@ -12,9 +12,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      retries: 3
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app", "-papppassword"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
   api:
     build: .
@@ -25,6 +27,7 @@ services:
       - "8000:8000"
     volumes:
       - ./:/app
+      - /app/.venv
 
 volumes:
   db_data:

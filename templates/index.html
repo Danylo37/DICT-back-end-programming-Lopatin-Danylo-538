@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Guestbook</h2>
+
+<div class="card mb-5">
+    <div class="card-body">
+        {% if session_user %}
+        <form id="commentForm" action="/add" method="post" novalidate>
+            <input type="hidden" name="page" value="{{ page }}">
+
+            <div class="mb-3">
+                <textarea name="text" id="text" rows="3"
+                          class="form-control {% if errors.text %}is-invalid{% endif %}"
+                          placeholder="Write a comment...">{{ form_data.text | default('') }}</textarea>
+                {% if errors.text %}
+                    <div class="invalid-feedback">{{ errors.text }}</div>
+                {% else %}
+                    <div class="invalid-feedback" id="textError"></div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+        {% else %}
+        <p class="text-muted"><a href="/login">Log in</a> to leave a comment.</p>
+        {% endif %}
+    </div>
+</div>
+
+<h2 class="mb-3">Comments</h2>
+
+{% if comments %}
+    {% for c in comments %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="fw-bold">{{ c.name }}</div>
+            <div class="text-muted small mb-2">{{ c.email }}</div>
+            <p class="mb-0">{{ c.text }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">No comments yet.</p>
+{% endif %}
+
+{% if total_pages > 1 %}
+<nav aria-label="Comments pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="/guestbook?page={{ page - 1 }}">&laquo; Prev</a>
+        </li>
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="/guestbook?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+            <a class="page-link" href="/guestbook?page={{ page + 1 }}">Next &raquo;</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+
+{% if session_user %}
+<script>
+    document.getElementById('commentForm').addEventListener('submit', function (e) {
+        const text = document.getElementById('text');
+        const errEl = document.getElementById('textError');
+        text.classList.remove('is-invalid');
+        errEl.textContent = '';
+
+        const textVal = text.value.trim();
+        if (!textVal) {
+            text.classList.add('is-invalid');
+            errEl.textContent = 'Comment text is required.';
+            e.preventDefault();
+        } else if (textVal.length < 3) {
+            text.classList.add('is-invalid');
+            errEl.textContent = 'Comment must be at least 3 characters.';
+            e.preventDefault();
+        } else if (textVal.length > 1000) {
+            text.classList.add('is-invalid');
+            errEl.textContent = 'Comment must be at most 1000 characters.';
+            e.preventDefault();
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

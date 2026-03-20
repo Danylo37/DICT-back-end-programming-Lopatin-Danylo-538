@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Login</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" action="/login" novalidate>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input class="form-control {% if errors.email %}is-invalid{% endif %}"
+                       type="email" name="email" id="email"
+                       value="{{ form_data.email | default('') }}"/>
+                {% if errors.email %}
+                    <div class="invalid-feedback">{{ errors.email }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input class="form-control {% if errors.password %}is-invalid{% endif %}"
+                       type="password" name="password" id="password"/>
+                {% if errors.password %}
+                    <div class="invalid-feedback">{{ errors.password }}</div>
+                {% endif %}
+            </div>
+
+            {% if errors.general %}
+                <div class="alert alert-danger" role="alert">
+                    {{ errors.general }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+
+        <hr>
+        <p class="mb-0">Don't have an account? <a href="/register">Register here</a></p>
+    </div>
+</div>
+{% endblock %}

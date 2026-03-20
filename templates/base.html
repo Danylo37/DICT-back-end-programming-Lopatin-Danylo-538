@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guestbook</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/6fca15713e.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg bg-body-secondary mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span style="color: Dodgerblue;">
+                <i class="fa-solid fa-book fa-xl"></i>
+            </span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="/guestbook" class="nav-link active">GuestBook</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav navbar-right">
+                {% if session_user %}
+                    <li class="nav-item">
+                        <a href="/logout" class="nav-link active">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link active">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link active">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5" style="max-width: 640px;">
+    {% block content %}{% endblock %}
+
+</div>
+
+</body>
+</html>

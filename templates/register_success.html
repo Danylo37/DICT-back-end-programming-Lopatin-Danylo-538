@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Check your email</h2>
+
+<div class="card">
+    <div class="card-body">
+        <div class="alert alert-success" role="alert">
+            <strong>Registration successful!</strong>
+        </div>
+        <p>We've sent a confirmation link to <strong>{{ email }}</strong>.</p>
+        <p class="text-muted mb-0">Please check your inbox and click the link to activate your account.</p>
+    </div>
+</div>
+{% endblock %}

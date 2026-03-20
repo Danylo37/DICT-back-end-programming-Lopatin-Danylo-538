@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Welcome to the Guestbook</h2>
+
+<div class="card">
+    <div class="card-body">
+        <p class="mb-3">Thank you for visiting! Here you can view and post comments in our guestbook.</p>
+        {% if session_user %}
+            <p class="mb-0">Hello, <strong>{{ session_user.name }}</strong>! Go to <a href="/guestbook" class="btn btn-primary btn-sm">Guestbook</a> to leave a comment.</p>
+        {% else %}
+            <p class="mb-0"><a href="/guestbook" class="btn btn-primary btn-sm">View Guestbook</a> or <a href="/register" class="btn btn-success btn-sm">Register</a> to leave a comment.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
